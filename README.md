@@ -56,9 +56,9 @@ If you're looking to get into COPS, this is one of the projects we are consideri
 
 - To find possible issues to work on, see the [issues tab](https://github.com/Varun-Kolanu/csoc_flutter/issues). If it was not opened by a maintainer, choose those which has label 'approved' (Maintainers for this repo are [Varun Kolanu](https://github.com/Varun-Kolanu/), [Shashank Kumar](https://github.com/shashankiitbhu), [Prithvi Dutta](https://github.com/prithvihehe) )
 - Choose according to your interests, complexity of the issue. Judgement depends on the complexity of issue, code cleanliness, commit discipline, solution developed and guidelines followed.
-- After choosing an issue, ask in the comments to assign you that issue. Only after getting an issue assigned, start working on it.
-- The first contributor who asked will get the assignment of issue in general.
-- One contributor can only work on one issue at a time. If you have done most of the work, raised a PR and waiting for a maintainer review, you can reach out a maintainer to assign a new issue.
+- After choosing an issue, comment `@csoc-bot claim` to get the issue assigned. Only after getting an issue assigned, start working on it.
+- The first contributor who asked will get the assignment of issue.
+- One contributor can only work on one issue at a time. If you have done most of the work, raised a PR and waiting for a maintainer review, you can reach out a maintainer to assign a new issue or abandon the previous issue.
 
 ### Opening an issue
 
@@ -138,7 +138,51 @@ Examples of scopes: server, ui, services etc
 git fetch --all
 ```
 
-### Important tools for making your life easier
+## Folder Structure:
+
+```
+.
+├── assets
+│   ├── images
+│   ├── icons
+│   └── videos
+├── ...
+└── lib
+    ├── cubit
+    │   ├── feature_cubit.dart
+    │   ├── feature_state.dart
+    │   └── ...
+    ├── models
+    │   ├── feature_model.dart
+    │   └── ...
+    ├── repository
+    │   ├── feature_repository.dart
+    │   └── ...
+    ├── services
+    │   ├── feature_service.dart
+    │   └── ...
+    ├── ui
+    │   ├── screens
+    │   │   ├── feature_screen.dart
+    │   │   └── ...
+    │   └── widgets
+    │       ├── feature_widget.dart
+    │       └── ...
+    └── utils
+        ├── colors.dart
+        ├── constants.dart
+        └── ...
+```
+
+1. `assets` have three folders images, icons and videos.
+2. `cubit`: For managing the state. You'll reach out to the functions in cubit for any work. These emit states, which are listened by UI.
+3. `repositories`: Cubit functions call repositories. These have functions which call APIs, acts a bridge between backend and flutter.
+4. `models`: Used by repositories or when JSONs are needed. Used to serialize or deserialize in JSONs (like changing data to JSON for API calls)
+5. `services`: Any function to be used by UI or cubit or literally any part of application. All the functions reside here
+6. `ui`: Has two folders for `screens` and `widgets`. Only UI and no functions in these. cubit and serices are present for that. Use BlocBuilder to update UI when states are emitted from cubit.
+7. `utils`: General folder for colors, constants, image paths etc
+
+## Important tools for making your life easier
 
 1. Getting the commit hashes of all the previous commits:
 
@@ -165,3 +209,4 @@ git fetch --all
    ```
 
 5. For `git commit --amend` and `git rebase`, always use `git push -f` instead of simple `git push`
+6. Update your repo in intervals using `git fetch --all` and `git rebase upstream/main`.
