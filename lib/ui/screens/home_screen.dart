@@ -5,6 +5,8 @@ import 'package:csoc_flutter/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'attendance.dart';
+
 // Can also access current User by AuthService().currentUser globally in the app
 
 class HomeScreen extends StatefulWidget {
@@ -20,21 +22,47 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     AuthCubit authCubit = context.read<AuthCubit>();
     return Scaffold(
-      appBar: const CustomAppBar(
+      appBar:   const CustomAppBar(
         title: "CSOC Flutter",
         backgroundColor: AppColors.primaryColor,
         actions: [
-          Text("Sample"),
+
         ],
+
       ),
       body: Column(
         children: [
           Text(widget.user.name!),
+
+
+
+
           ElevatedButton(
             onPressed: authCubit.signOut,
-            child: const Text("Signout"),
+            child: const Text("Sign-out"),
           ),
         ],
+      ),
+      bottomNavigationBar:
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Column(
+            children: [
+              IconButton(onPressed: ()=> {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const Attendance()))
+              }, icon: const Icon(Icons.menu_book_rounded) ),
+              const Text('Attendance')
+            ],
+          ),
+          Column(
+            children: [
+              IconButton(onPressed:()=>{} //Todo: Add the reminder page.
+                  , icon: const Icon(Icons.book))
+            ],
+          )
+        ],
+
       ),
     );
   }
