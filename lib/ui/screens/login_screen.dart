@@ -18,12 +18,11 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Login"),
-        centerTitle: true,
       ),
       body: Center(
         child: ElevatedButton(
           onPressed: authCubit.signinWithGoogle,
-          child: const Text("Sign-in with Google"),
+          child: const Text("Signin with Google"),
         ),
       ),
     );
