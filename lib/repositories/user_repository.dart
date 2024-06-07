@@ -9,11 +9,17 @@ class UserRepository {
   }
 
   Future getUser(String userId) async {
-    final snapshot = await UserModel().firebaseCollection.doc(userId).get();
-    if (snapshot.exists) {
-      return snapshot;
+    final snapshot = await UserModel()
+        .firebaseCollection
+        .where("id", isEqualTo: userId)
+        .get();
+
+    if (snapshot.docs.isNotEmpty) {
+      final documentData = snapshot.docs.first.data();
+      final jsonData = Map<String, dynamic>.from(documentData);
+      return jsonData;
     } else {
-      return Future.error("Document not found");
+      return null;
     }
   }
 }

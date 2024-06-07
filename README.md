@@ -1,7 +1,6 @@
 # CSOC'24 Flutter
 
 CSOC'24 Project in App Dev track using Flutter.
-This app is currently in its initial phase. Suggest your project ideas to work on, the following 4 weeks in [issue#1](https://github.com/Varun-Kolanu/csoc_flutter/issues/1) as comments.
 
 ## Setting up the development environment
 
@@ -33,19 +32,26 @@ If any of the above is missing, please follow these links: [Installing Git](http
    ```
 
 6. Fetch the code from remote:
+
    ```bash
    git fetch --all
    ```
-7. Run the following command to install dependencies:
+
+7. Add the `debug.keystore` file provided to you (if not, ask a maintainer) in android folder i.e., as `/android/debug.keystore`
+
+8. Run the following command to install dependencies:
 
    ```bash
    flutter pub get
    ```
 
-8. Run this to start running the app in Physical device or Android emulator:
+9. Run this to start running the app in Physical device or Android emulator:
+
    ```bash
    flutter run
    ```
+
+10. Do `git fetch --all` and `git rebase upstream/main` frequently to update the local repository.
 
 ## Contributing
 
@@ -210,3 +216,23 @@ git fetch --all
 
 5. For `git commit --amend` and `git rebase`, always use `git push -f` instead of simple `git push`
 6. Update your repo in intervals using `git fetch --all` and `git rebase upstream/main`.
+7. To edit a particular commit use Interactive rebase: `git rebase --interactive <commit-hash>~` and follow the commands.
+
+   For example, to edit a commit message of a particular commit:
+
+   1. Run git log
+   2. Copy the commit hash of the commit you want to edit
+   3. Run git rebase -i <commit_hash>~ for eg., git rebase -i 9824....7552~
+   4. A vim editor will be opened
+   5. Press the keyboard key "i"
+   6. You can see footer as "--INSERT--"
+   7. Now you can see some lines with format "keyword commit_hash commit message" and also can see some commands given below
+   8. For eg., "pick ... Added attendance page"
+   9. Edit that line to "reword ... Added attendance page" (reword refers to changing commit message)
+   10. Press "Esc"
+   11. Press ":wq" and Enter
+   12. A new editor will be opened in which you can see the commit message
+   13. Press i
+   14. Edit the commit message
+   15. Press Esc and ":wq" to save
+   16. At last, git push -f
