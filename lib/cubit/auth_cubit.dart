@@ -25,11 +25,19 @@ class AuthCubit extends Cubit<AuthState> {
                 name: userCredentials.displayName)
             .toJson();
 
-        _userRepository.createUser(userCredentials.uid, userMap).then((value) {
-          emit(AuthSuccess(value));
-        }).catchError((error) {
-          emit(const AuthError("Failed to create user"));
-        });
+        final Map<String, dynamic>? user =
+            await _userRepository.getUser(userCredentials.uid);
+        if (user == null) {
+          _userRepository
+              .createUser(userCredentials.uid, userMap)
+              .then((value) {
+            emit(AuthSuccess(value));
+          }).catchError((error) {
+            emit(const AuthError("Failed to create user"));
+          });
+        } else {
+          emit(AuthSuccess(UserModel.fromJson(user)));
+        }
       } else {
         emit(const AuthError("No User Found"));
       }

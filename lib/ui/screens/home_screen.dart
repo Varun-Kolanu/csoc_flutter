@@ -1,13 +1,12 @@
+import 'dart:convert';
 import 'package:csoc_flutter/cubit/auth_cubit.dart';
 import 'package:csoc_flutter/models/user_model.dart';
 import 'package:csoc_flutter/ui/widgets/app_bar.dart';
 import 'package:csoc_flutter/utils/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-
-
-// Can also access current User by AuthService().currentUser globally in the app
+import '../../models/attendance.dart';
 
 class HomeScreen extends StatefulWidget {
   final UserModel user;
@@ -18,6 +17,23 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  late Future<List<Subject>> subjects;
+
+  @override
+  void initState() {
+    super.initState();
+    subjects = fetchSubjects();
+  }
+
+  Future<List<Subject>> fetchSubjects() async {
+    final String response =
+    await rootBundle.loadString('assets/attendance_data.json');
+    final data = await json.decode(response);
+    return (data['subjects'] as List)
+        .map((subject) => Subject.fromJson(subject))
+        .toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     AuthCubit authCubit = context.read<AuthCubit>();
@@ -25,79 +41,155 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: const CustomAppBar(
         title: "CSOC Flutter",
         backgroundColor: AppColors.primaryColor,
-        actions: [
-        ],
-
+        actions: [],
       ),
       body: Column(
         children: [
-          Text(widget.user.name!),
+          Text(
+            widget.user.name!,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
           ElevatedButton(
             onPressed: authCubit.signOut,
             child: const Text("Sign-out"),
           ),
-      Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text('Attendance', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 20),
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          const Center(
+            child: Column(
               children: [
-                Column(
+                Text(
+                  'Attendance',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Icon(Icons.circle, color: Colors.green),
-                    Text('Present'),
+                    Column(
+                      children: [
+                        Icon(Icons.circle, color: Colors.green),
+                        Text('Present'),
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        Icon(Icons.circle, color: Colors.red),
+                        Text('Absent'),
+
+                      ],
+
+                    ),
+                    Column(
+                      children: [
+                        Icon(Icons.circle, color: Colors.yellow),
+                        Text('Cancelled'),
+
+                      ],
+
+                    ),
+                    Column(
+                      children: [
+                        Icon(Icons.circle, color: Colors.blue),
+                        Text('Proxied'),
+
+                      ],
+
+                    ),
                   ],
                 ),
-                Column(
-                  children: [
-                    Icon(Icons.circle, color: Colors.red),
-                    Text('Absent'),
-                  ],
-                ),
-                Column(
-                  children: [
-                    Icon(Icons.circle, color: Colors.blue),
-                    Text('Proxied'),
-                  ],
-                ),
-                Column(
-                  children: [
-                    Icon(Icons.circle, color: Colors.yellow),
-                    Text('Cancelled'),
-                  ],
-                )
+                SizedBox(height: 20),
               ],
             ),
-            const SizedBox(height: 20),
-            const SizedBox(
-                height: 200,
-                child: SingleChildScrollView(
-                    child: Column(
-                        children: [
-                          //TODO: Add a classes class and display the classes on the selected date here.
-                        ]
-                    )
-                )
+          ),
+          SizedBox(
+            height: 400,
+            child: Flexible(
+              child: FutureBuilder<List<Subject>>(
+                future: subjects,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else {
+                    final subjects = snapshot.data!;
+                    return ListView.builder(
+                      padding: const EdgeInsets.all(8.0),
+                      itemCount: subjects.length,
+                      itemBuilder: (context, index) {
+                        final subject = subjects[index];
+                        return Material(
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(vertical: 8.0),
+                            decoration: BoxDecoration(
+                              color: Colors.cyanAccent,
+                              borderRadius: BorderRadius.circular(15.0),
+                            ),
+                            child: ListTile(
+                              title: Center(child: Text(subject.subjectName)),
+                              tileColor: Colors.cyanAccent,
+                              subtitle:Padding(
+                                padding: const EdgeInsets.all(5.0),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          
+                                  children: [
+                                    Text("Real Attendance: ${subject.realAttendance}"),
+                                    Text("Proxied Attendance: ${subject.attendanceWithProxies}"),
+                                    Text("Target Attendance: ${subject.targetAttendance}"),
+                                    const Text("Attend/Can Bunk ------- Clases"),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          
+                                      children: <Widget>[
+                                        IconButton(
+                                          onPressed: () {},
+                                          icon: const Icon(Icons.circle, color: Colors.green),
+                                        ),
+                                        IconButton(
+                                          onPressed: () {},
+                                          icon: const Icon(Icons.circle, color: Colors.red),
+                                        ),
+                                        IconButton(
+                                          onPressed: () {},
+                                          icon: const Icon(Icons.circle, color: Colors.blue),
+                                        ),
+                                        IconButton(
+                                          onPressed: () {},
+                                          icon: const Icon(Icons.circle, color: Colors.yellow),
+                                        ),//Todo: Add logic in these buttons
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              
+                          
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  }
+                },
+              ),
             ),
-            const SizedBox(height: 20),
-
-            ElevatedButton(
-              onPressed: () {
-                //TODO: Add logic to add extra class
-              },
-              child: const Text('Add Extra Class'), ),
-            ElevatedButton(onPressed: (){
+          ),
+          const SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: () {
+              // TODO: Add logic to add extra class
+            },
+            child: const Text('Add Extra Class'),
+          ),
+          ElevatedButton(
+            onPressed: () {
               Navigator.of(context).pop();
-            }, child: const Text('Back'))
-          ],
-        ),
+            },
+            child: const Text('Back'),
+          ),
+        ],
       ),
-      ],)
-
-      );
-
+    );
   }
 }
+
