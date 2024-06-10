@@ -43,66 +43,54 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: AppColors.primaryColor,
         actions: [],
       ),
-      body: Column(
-        children: [
-          Text(
-            widget.user.name!,
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          ElevatedButton(
-            onPressed: authCubit.signOut,
-            child: const Text("Sign-out"),
-          ),
-          const Center(
-            child: Column(
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Text(
+              widget.user.name!,
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            ElevatedButton(
+              onPressed: authCubit.signOut,
+              child: const Text("Sign-out"),
+            ),
+            const Text(
+              'Attendance',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 20),
+            const Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Text(
-                  'Attendance',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                Column(
                   children: [
-                    Column(
-                      children: [
-                        Icon(Icons.circle, color: Colors.green),
-                        Text('Present'),
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        Icon(Icons.circle, color: Colors.red),
-                        Text('Absent'),
-
-                      ],
-
-                    ),
-                    Column(
-                      children: [
-                        Icon(Icons.circle, color: Colors.yellow),
-                        Text('Cancelled'),
-
-                      ],
-
-                    ),
-                    Column(
-                      children: [
-                        Icon(Icons.circle, color: Colors.blue),
-                        Text('Proxied'),
-
-                      ],
-
-                    ),
+                    Icon(Icons.circle, color: Colors.green),
+                    Text('Present'),
                   ],
                 ),
-                SizedBox(height: 20),
+                Column(
+                  children: [
+                    Icon(Icons.circle, color: Colors.red),
+                    Text('Absent'),
+                  ],
+                ),
+                Column(
+                  children: [
+                    Icon(Icons.circle, color: Colors.yellow),
+                    Text('Cancelled'),
+                  ],
+                ),
+                Column(
+                  children: [
+                    Icon(Icons.circle, color: Colors.blue),
+                    Text('Proxied'),
+                  ],
+                ),
               ],
             ),
-          ),
-          SizedBox(
-            height: 400,
-            child: Flexible(
+            const SizedBox(height: 20),
+            SizedBox(
+              height: 400, // Constrains the ListView's height
               child: FutureBuilder<List<Subject>>(
                 future: subjects,
                 builder: (context, snapshot) {
@@ -117,53 +105,58 @@ class _HomeScreenState extends State<HomeScreen> {
                       itemCount: subjects.length,
                       itemBuilder: (context, index) {
                         final subject = subjects[index];
-                        return Material(
-                          child: Container(
-                            margin: const EdgeInsets.symmetric(vertical: 8.0),
-                            decoration: BoxDecoration(
-                              color: Colors.cyanAccent,
-                              borderRadius: BorderRadius.circular(15.0),
-                            ),
-                            child: ListTile(
-                              title: Center(child: Text(subject.subjectName)),
-                              tileColor: Colors.cyanAccent,
-                              subtitle:Padding(
-                                padding: const EdgeInsets.all(5.0),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          
-                                  children: [
-                                    Text("Real Attendance: ${subject.realAttendance}"),
-                                    Text("Proxied Attendance: ${subject.attendanceWithProxies}"),
-                                    Text("Target Attendance: ${subject.targetAttendance}"),
-                                    const Text("Attend/Can Bunk ------- Clases"),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          
-                                      children: <Widget>[
-                                        IconButton(
-                                          onPressed: () {},
-                                          icon: const Icon(Icons.circle, color: Colors.green),
-                                        ),
-                                        IconButton(
-                                          onPressed: () {},
-                                          icon: const Icon(Icons.circle, color: Colors.red),
-                                        ),
-                                        IconButton(
-                                          onPressed: () {},
-                                          icon: const Icon(Icons.circle, color: Colors.blue),
-                                        ),
-                                        IconButton(
-                                          onPressed: () {},
-                                          icon: const Icon(Icons.circle, color: Colors.yellow),
-                                        ),//Todo: Add logic in these buttons
-                                      ],
-                                    ),
-                                  ],
-                                ),
+                        return Container(
+                          margin: const EdgeInsets.symmetric(vertical: 8.0),
+                          decoration: BoxDecoration(
+                            color: Colors.cyanAccent,
+                            borderRadius: BorderRadius.circular(15.0),
+                          ),
+                          child: ListTile(
+                            title: Center(child: Text(subject.subjectName)),
+                            subtitle: Padding(
+                              padding: const EdgeInsets.all(5.0),
+                              child: Column(
+                                mainAxisAlignment:
+                                MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                      "Real Attendance: ${subject.realAttendance}"),
+                                  Text(
+                                      "Proxied Attendance: ${subject.attendanceWithProxies}"),
+                                  Text(
+                                      "Target Attendance: ${subject.targetAttendance}"),
+                                  const Text("Attend/Can Bunk ------- Classes"),
+                                  Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                    children: <Widget>[
+                                      IconButton(
+                                        onPressed: () {},
+                                        icon: const Icon(Icons.circle,
+                                            color: Colors.green),
+                                      ),
+                                      IconButton(
+                                        onPressed: () {},
+                                        icon: const Icon(Icons.circle,
+                                            color: Colors.red),
+                                      ),
+                                      IconButton(
+                                        onPressed: () {},
+                                        icon: const Icon(Icons.circle,
+                                            color: Colors.blue),
+                                      ),
+                                      IconButton(
+                                        onPressed: () {},
+                                        icon: const Icon(Icons.circle,
+                                            color: Colors.yellow),
+                                      ), //TODO: Add logic in these buttons
+                                    ],
+                                  ),
+                                ],
                               ),
-                              
-                          
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15),
                             ),
                           ),
                         );
@@ -173,23 +166,24 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
             ),
-          ),
-          const SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: () {
-              // TODO: Add logic to add extra class
-            },
-            child: const Text('Add Extra Class'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: const Text('Back'),
-          ),
-        ],
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                // TODO: Add logic to add extra class
+              },
+              child: const Text('Add Extra Class'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Back'),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
+
 
