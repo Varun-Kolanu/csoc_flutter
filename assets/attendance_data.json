@@ -1,0 +1,34 @@
+{
+  "subjects": [
+    {
+      "subject_name": "Mathematics",
+      "real_attendance": 85,
+      "attendance_with_proxies": 90,
+      "target_attendance": 95
+    },
+    {
+      "subject_name": "Physics",
+      "real_attendance": 80,
+      "attendance_with_proxies": 85,
+      "target_attendance": 90
+    },
+    {
+      "subject_name": "Chemistry",
+      "real_attendance": 75,
+      "attendance_with_proxies": 80,
+      "target_attendance": 85
+    },
+    {
+      "subject_name": "Biology",
+      "real_attendance": 78,
+      "attendance_with_proxies": 83,
+      "target_attendance": 88
+    },
+    {
+      "subject_name": "Computer Science",
+      "real_attendance": 92,
+      "attendance_with_proxies": 95,
+      "target_attendance": 97
+    }
+  ]
+}
