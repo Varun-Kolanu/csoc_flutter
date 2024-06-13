@@ -41,11 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     AuthCubit authCubit = context.read<AuthCubit>();
     return Scaffold(
-        appBar: const CustomAppBar(
-          title: "CSOC Flutter",
-          backgroundColor: AppColors.primaryColor,
-          actions: [],
-        ),
+        appBar: const CustomAppBar(title: "iBeThere",),
         body: SingleChildScrollView(
           child: Column(
             children: [
