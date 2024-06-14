@@ -151,16 +151,8 @@ git fetch --all
 ├── assets
 │   ├── images
 │   ├── icons
-<<<<<<< HEAD
-│   └── videos
-=======
-<<<<<<< HEAD
 │   ├── videos
 |   └── attendance_data.json
-=======
-│   └── videos
->>>>>>> bf22d73 (feat: add firebase and improved folder structure)
->>>>>>> 09e97f9 (feat: add firebase and improved folder structure)
 ├── ...
 └── lib
     ├── cubit
@@ -180,15 +172,7 @@ git fetch --all
     │   ├── screens
     │   │   ├── feature_screen.dart
     │   │   └── ...
-<<<<<<< HEAD
     │   └── widgets
-=======
-<<<<<<< HEAD
-    │   └── widgetsg
-=======
-    │   └── widgets
->>>>>>> bf22d73 (feat: add firebase and improved folder structure)
->>>>>>> 09e97f9 (feat: add firebase and improved folder structure)
     │       ├── feature_widget.dart
     │       └── ...
     └── utils
@@ -233,7 +217,6 @@ git fetch --all
 
 5. For `git commit --amend` and `git rebase`, always use `git push -f` instead of simple `git push`
 6. Update your repo in intervals using `git fetch --all` and `git rebase upstream/main`.
-<<<<<<< HEAD
 7. To edit a particular commit use Interactive rebase: `git rebase --interactive <commit-hash>~` and follow the commands.
 
    For example, to edit a commit message of a particular commit:
@@ -254,5 +237,3 @@ git fetch --all
    14. Edit the commit message
    15. Press Esc and ":wq" to save
    16. At last, git push -f
-=======
->>>>>>> bf22d73 (feat: add firebase and improved folder structure)

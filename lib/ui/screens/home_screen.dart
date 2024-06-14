@@ -1,13 +1,17 @@
-import 'package:flutter/material.dart';
+import 'dart:convert';
+
+import 'package:csoc_flutter/cubit/auth_cubit.dart';
+import 'package:csoc_flutter/cubit/date_cubit.dart';
+import 'package:csoc_flutter/cubit/theme_cubit.dart';
 import 'package:csoc_flutter/models/subjects.dart';
 import 'package:csoc_flutter/models/user_model.dart';
-import 'package:csoc_flutter/cubit/auth_cubit.dart';
 import 'package:csoc_flutter/ui/widgets/app_bar.dart';
-import 'package:csoc_flutter/utils/colors.dart';
+import 'package:csoc_flutter/ui/widgets/date_title.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'dart:convert';
-import 'package:csoc_flutter/ui/screens/grades.dart';  // Import the grades screen
+
+import 'package:csoc_flutter/ui/screens/grades.dart'; // Import the grades screen
 
 class HomeScreen extends StatefulWidget {
   final UserModel user;
@@ -24,11 +28,12 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     subjects = fetchSubjects();
+    context.read<DateCubit>().resetDate();
   }
 
   Future<List<Subject>> fetchSubjects() async {
     final String response =
-    await rootBundle.loadString('assets/attendance_data.json');
+        await rootBundle.loadString('assets/attendance_data.json');
     final data = await json.decode(response);
     return (data['subjects'] as List)
         .map((subject) => Subject.fromJson(subject))
@@ -37,12 +42,30 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final primaryColor = Theme.of(context).primaryColor;
+    final backgroundColor = Theme.of(context).scaffoldBackgroundColor;
+    final secondaryColor = Theme.of(context).colorScheme.secondary;
     AuthCubit authCubit = context.read<AuthCubit>();
+
     return Scaffold(
-      appBar: const CustomAppBar(
-        title: "CSOC Flutter",
-        backgroundColor: AppColors.primaryColor,
-        actions: [],
+      appBar: CustomAppBar(
+        title: DateTitle(),
+        textStyle: TextStyle(color: primaryColor),
+        backgroundColor: backgroundColor,
+        leading: IconButton(
+          onPressed: () {},
+          color: primaryColor,
+          icon: const Icon(Icons.menu),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.brightness_6),
+            color: primaryColor,
+            onPressed: () {
+              context.read<ThemeCubit>().toggleTheme();
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -57,8 +80,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const Text('Attendance',
-                      style: TextStyle(
-                          fontSize: 20, fontWeight: FontWeight.bold)),
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 20),
                   const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -111,12 +134,11 @@ class _HomeScreenState extends State<HomeScreen> {
                               itemBuilder: (context, index) {
                                 final subject = subjects[index];
                                 return Container(
-                                  margin: const EdgeInsets.symmetric(
-                                      vertical: 8.0),
+                                  margin:
+                                      const EdgeInsets.symmetric(vertical: 8.0),
                                   decoration: BoxDecoration(
-                                    color: Colors.cyanAccent,
-                                    borderRadius:
-                                    BorderRadius.circular(15.0),
+                                    color: secondaryColor,
+                                    borderRadius: BorderRadius.circular(15.0),
                                   ),
                                   child: ListTile(
                                     title: Center(
@@ -125,7 +147,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       padding: const EdgeInsets.all(5.0),
                                       child: Column(
                                         mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(
                                               "Real Attendance: ${subject.realAttendance}"),
@@ -137,7 +159,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                               "Attend/Can Bunk ------- Classes"),
                                           Row(
                                             mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
+                                                MainAxisAlignment.spaceAround,
                                             children: <Widget>[
                                               IconButton(
                                                 onPressed: () {},
@@ -165,8 +187,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                     ),
                                     shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                      BorderRadius.circular(15),
+                                      borderRadius: BorderRadius.circular(15),
                                     ),
                                   ),
                                 );
@@ -189,13 +210,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => GradeScreen(userId: widget.user.id ?? ''), // Pass the userId here
+                          builder: (context) => GradeScreen(
+                              userId:
+                                  widget.user.id ?? ''), // Pass the userId here
                         ),
                       );
                     },
                     child: const Text('View Grades'),
                   ),
-
                   ElevatedButton(
                     onPressed: () {
                       Navigator.of(context).pop();
