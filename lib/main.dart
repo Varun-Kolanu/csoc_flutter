@@ -6,6 +6,7 @@ import 'package:csoc_flutter/ui/screens/login_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:csoc_flutter/ui/screens/grades.dart'; // Import the new grade screen
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
