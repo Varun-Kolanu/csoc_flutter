@@ -1,21 +1,20 @@
 import 'dart:convert';
 
-import 'package:csoc_flutter/cubit/auth_cubit.dart';
 import 'package:csoc_flutter/cubit/date_cubit.dart';
 import 'package:csoc_flutter/cubit/theme_cubit.dart';
 import 'package:csoc_flutter/models/subjects.dart';
-import 'package:csoc_flutter/models/user_model.dart';
+import 'package:csoc_flutter/ui/screens/notifications.dart';
 import 'package:csoc_flutter/ui/widgets/app_bar.dart';
 import 'package:csoc_flutter/ui/widgets/date_title.dart';
+import 'package:csoc_flutter/ui/widgets/navigation_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:csoc_flutter/ui/screens/grades.dart'; // Import the grades screen
+import '../../services/auth_service.dart';
 
 class HomeScreen extends StatefulWidget {
-  final UserModel user;
-  const HomeScreen({super.key, required this.user});
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -45,19 +44,21 @@ class _HomeScreenState extends State<HomeScreen> {
     final primaryColor = Theme.of(context).primaryColor;
     final backgroundColor = Theme.of(context).scaffoldBackgroundColor;
     final secondaryColor = Theme.of(context).colorScheme.secondary;
-    AuthCubit authCubit = context.read<AuthCubit>();
-
+    // AuthCubit authCubit = context.read<AuthCubit>();
+    final userCredentials = AuthService().currentUser;
     return Scaffold(
       appBar: CustomAppBar(
         title: DateTitle(),
         textStyle: TextStyle(color: primaryColor),
         backgroundColor: backgroundColor,
-        leading: IconButton(
-          onPressed: () {},
-          color: primaryColor,
-          icon: const Icon(Icons.menu),
-        ),
         actions: [
+          IconButton(
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => Notifications()));
+              },
+              icon: const Icon(Icons.notifications_active_rounded),
+              color: primaryColor),
           IconButton(
             icon: const Icon(Icons.brightness_6),
             color: primaryColor,
@@ -65,16 +66,14 @@ class _HomeScreenState extends State<HomeScreen> {
               context.read<ThemeCubit>().toggleTheme();
             },
           ),
+          const Padding(padding: EdgeInsets.symmetric(horizontal: 10.0))
         ],
       ),
+      drawer: const CustomNavigationDrawer(),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Text(widget.user.name!),
-            ElevatedButton(
-              onPressed: authCubit.signOut,
-              child: const Text("Sign-out"),
-            ),
+            Text("Welcome! ${userCredentials?.displayName!}"),
             Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -204,25 +203,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       // TODO: Add logic to add extra class
                     },
                     child: const Text('Add Extra Class'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => GradeScreen(
-                              userId:
-                                  widget.user.id ?? ''), // Pass the userId here
-                        ),
-                      );
-                    },
-                    child: const Text('View Grades'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text('Back'),
                   ),
                 ],
               ),

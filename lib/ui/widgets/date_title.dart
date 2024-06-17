@@ -1,8 +1,8 @@
+import 'package:csoc_flutter/cubit/date_cubit.dart';
+import 'package:csoc_flutter/services/date_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:csoc_flutter/cubit/date_cubit.dart';
-import 'package:csoc_flutter/services/date_service.dart';
 
 class DateTitle extends StatelessWidget {
   final DateService _dateService =
@@ -25,7 +25,6 @@ class DateTitle extends StatelessWidget {
     return BlocBuilder<DateCubit, DateTime>(
       builder: (context, selectedDate) {
         final formattedDate = DateFormat('EEEE, MMMM d').format(selectedDate);
-
         return InkWell(
           onTap: () => _dateSelection(context),
           child: Row(
