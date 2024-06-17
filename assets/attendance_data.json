@@ -2,30 +2,35 @@
   "subjects": [
     {
       "subject_name": "Mathematics",
+      "id": "weiffg82734",
       "real_attendance": 85,
       "attendance_with_proxies": 90,
       "target_attendance": 95
     },
     {
       "subject_name": "Physics",
+      "id": "wewyfg97273yy",
       "real_attendance": 80,
       "attendance_with_proxies": 85,
       "target_attendance": 90
     },
     {
       "subject_name": "Chemistry",
+      "id": "idyvg861",
       "real_attendance": 75,
       "attendance_with_proxies": 80,
       "target_attendance": 85
     },
     {
       "subject_name": "Biology",
+      "id": "iuwg8723t",
       "real_attendance": 78,
       "attendance_with_proxies": 83,
       "target_attendance": 88
     },
     {
       "subject_name": "Computer Science",
+      "id": "iwue8723",
       "real_attendance": 92,
       "attendance_with_proxies": 95,
       "target_attendance": 97

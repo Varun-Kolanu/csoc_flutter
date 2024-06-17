@@ -3,15 +3,14 @@ import 'dart:convert';
 import 'package:csoc_flutter/cubit/auth_cubit.dart';
 import 'package:csoc_flutter/cubit/date_cubit.dart';
 import 'package:csoc_flutter/cubit/theme_cubit.dart';
-import 'package:csoc_flutter/models/subjects.dart';
+import 'package:csoc_flutter/models/subject.dart';
 import 'package:csoc_flutter/models/user_model.dart';
+import 'package:csoc_flutter/ui/screens/grades.dart'; // Import the grades screen
 import 'package:csoc_flutter/ui/widgets/app_bar.dart';
 import 'package:csoc_flutter/ui/widgets/date_title.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import 'package:csoc_flutter/ui/screens/grades.dart'; // Import the grades screen
 
 class HomeScreen extends StatefulWidget {
   final UserModel user;
