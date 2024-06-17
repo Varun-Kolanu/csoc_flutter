@@ -11,7 +11,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -49,7 +48,7 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
- Widget build(BuildContext context) {
+  Widget build(BuildContext context) {
     final authCubit = context.read<AuthCubit>();
 
     return BlocBuilder<ThemeCubit, ThemeMode>(
@@ -61,7 +60,7 @@ class MyApp extends StatelessWidget {
               if (state is AuthInitial) {
                 return const LoginScreen();
               } else if (state is AuthSuccess) {
-                return HomeScreen(user: state.user);
+                return const HomeScreen();
               } else if (state is AuthError) {
                 return LoginScreen(
                   msg: state.error,
