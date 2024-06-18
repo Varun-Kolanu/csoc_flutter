@@ -9,7 +9,7 @@ class FriendsPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Friends"),
         leading: IconButton(
-            icon: Icon(Icons.arrow_back),
+            icon: const Icon(Icons.arrow_back),
             onPressed: () {
               Navigator.pop(context);
             }),

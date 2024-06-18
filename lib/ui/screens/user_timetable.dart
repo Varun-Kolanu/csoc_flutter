@@ -9,7 +9,7 @@ class UserTimetable extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Your Timetable"),
         leading: IconButton(
-            icon: Icon(Icons.arrow_back),
+            icon: const Icon(Icons.arrow_back),
             onPressed: () {
               Navigator.pop(context);
             }),

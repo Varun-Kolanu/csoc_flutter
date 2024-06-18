@@ -111,24 +111,30 @@ class CustomNavigationDrawer extends StatelessWidget {
               leading: const Icon(Icons.connect_without_contact),
               title: const Text('Friends'),
               onTap: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => FriendsPage()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const FriendsPage()));
               },
             ),
             ListTile(
               leading: const Icon(Icons.developer_board),
               title: const Text('My TimeTable'),
               onTap: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => UserTimetable()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const UserTimetable()));
               },
             ),
             ListTile(
               leading: const Icon(Icons.developer_board),
               title: const Text('Friends\' TimeTable'),
               onTap: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => FriendTimetable()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const FriendTimetable()));
               },
             ),
             ListTile(
@@ -136,7 +142,7 @@ class CustomNavigationDrawer extends StatelessWidget {
               title: const Text('Request proxy'),
               onTap: () {
                 Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => ProxyPage()));
+                    MaterialPageRoute(builder: (context) => const ProxyPage()));
               },
             ),
             ListTile(
@@ -144,7 +150,7 @@ class CustomNavigationDrawer extends StatelessWidget {
               title: const Text('Settings'),
               onTap: () {
                 Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => Settings()));
+                    MaterialPageRoute(builder: (context) => const Settings()));
               },
             ),
             const Divider(),

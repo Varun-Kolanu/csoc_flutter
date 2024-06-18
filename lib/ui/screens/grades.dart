@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:csoc_flutter/services/firestore_service.dart';
+import 'package:flutter/material.dart';
 
 class GradeScreen extends StatelessWidget {
   final String userId;
@@ -10,7 +10,6 @@ class GradeScreen extends StatelessWidget {
     FirestoreService firestoreService = FirestoreService();
     return firestoreService.fetchSubjects(userId);
   }
-
 
   double calculateSPI(List<Map<String, dynamic>> subjects) {
     final gradePoints = {
@@ -28,7 +27,8 @@ class GradeScreen extends StatelessWidget {
     for (var subject in subjects) {
       int credits = subject['credits'];
       String grade = subject['grade'];
-      double gradeValue = gradePoints[grade] ?? 0.0; // Get the corresponding grade value from the map
+      double gradeValue = gradePoints[grade] ??
+          0.0; // Get the corresponding grade value from the map
       totalCredits += credits;
       totalPoints += credits * gradeValue;
     }
@@ -73,9 +73,9 @@ class GradeScreen extends StatelessWidget {
                               ],
                             ),
                             trailing: IconButton(
-                              icon: Icon(Icons.edit),
+                              icon: const Icon(Icons.edit),
                               onPressed: () {
-                                 // TODO: handle edit button
+                                // TODO: handle edit button
                               },
                             ),
                           ),
@@ -92,5 +92,4 @@ class GradeScreen extends StatelessWidget {
       ),
     );
   }
-
 }

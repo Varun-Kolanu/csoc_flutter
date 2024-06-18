@@ -9,7 +9,7 @@ class ProxyPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Proxy Request"),
         leading: IconButton(
-            icon: Icon(Icons.arrow_back),
+            icon: const Icon(Icons.arrow_back),
             onPressed: () {
               Navigator.pop(context);
             }),
