@@ -20,4 +20,21 @@ class FirestoreService {
       throw Exception('Error fetching subjects: $e');
     }
   }
+
+  Future<void> addSubject(
+      // To add the subject a user wishes to add in the database.
+      String userId,
+      Map<String, dynamic> subjectData) async {
+    try {
+      QuerySnapshot userSnapshot =
+          await _db.collection('User').where('id', isEqualTo: userId).get();
+      if (userSnapshot.docs.isEmpty) {
+        throw Exception('User document not found for ID: $userId');
+      }
+      DocumentSnapshot userDocument = userSnapshot.docs.first;
+      await userDocument.reference.collection('subjects').add(subjectData);
+    } catch (e) {
+      throw Exception('Error adding subject: $e');
+    }
+  }
 }
