@@ -3,6 +3,7 @@ import 'package:csoc_flutter/ui/screens/friends.dart';
 import 'package:csoc_flutter/ui/screens/grades.dart';
 import 'package:csoc_flutter/ui/screens/proxy.dart';
 import 'package:csoc_flutter/ui/screens/settings.dart';
+import 'package:csoc_flutter/ui/screens/subjects_screen.dart';
 import 'package:csoc_flutter/ui/screens/user_timetable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -89,11 +90,10 @@ class CustomNavigationDrawer extends StatelessWidget {
               leading: const Icon(Icons.subject),
               title: const Text('Subjects'),
               onTap: () {
-                // Navigator.push(
-                //     context,
-                //     MaterialPageRoute(
-                //         builder: (context) => const HomeScreen()));
-                Navigator.pop(context);
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const SubjectsPage()));
               },
             ),
             ListTile(
