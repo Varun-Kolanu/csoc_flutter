@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class Subject {
+  final String id;
   final String name;
   final int targetAttendance;
   final int credits;
@@ -8,11 +9,12 @@ class Subject {
   int totalClasses;
   int attendedClasses;
   int proxiedClasses;
-  final String grade = "";
-  final String marks = "";
+  final String grade;
+  final String marks;
   String selectedAction;
 
   Subject({
+    required this.id,
     required this.name,
     required this.targetAttendance,
     required this.credits,
@@ -20,6 +22,8 @@ class Subject {
     required this.totalClasses,
     required this.attendedClasses,
     required this.proxiedClasses,
+    this.grade = '',
+    this.marks = '',
     this.selectedAction = '',
   });
 
@@ -38,6 +42,7 @@ class Subject {
 
   factory Subject.fromJson(Map<String, dynamic> json) {
     return Subject(
+      id: json['id'],
       name: json['name'],
       targetAttendance: json['target_attendance'],
       credits: json['credits'],
@@ -45,8 +50,26 @@ class Subject {
       totalClasses: json['total_classes'],
       attendedClasses: json['classes_attended'],
       proxiedClasses: json['proxied_classes'],
+      grade: json['grade'],
+      marks: json['marks'],
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'credits': credits,
+      'days_held': daysHeld,
+      'total_classes': totalClasses,
+      'classes_attended': attendedClasses,
+      'proxied_classes': proxiedClasses,
+      'target_attendance': targetAttendance,
+      'grade': grade,
+      'marks': marks,
+    };
+  }
+
   Color borderColor = Colors.transparent;
   void attended() {
     attendedClasses++;
