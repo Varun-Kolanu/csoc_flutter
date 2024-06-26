@@ -6,6 +6,7 @@ import '../../models/subject.dart';
 import '../../services/auth_service.dart';
 import '../../services/firestore_service.dart';
 import '../widgets/app_bar.dart';
+import '../widgets/subject_form.dart';
 
 class SubjectsPage extends StatefulWidget {
   const SubjectsPage({
@@ -41,167 +42,39 @@ class _SubjectsPageState extends State<SubjectsPage> {
   }
 
   Future<void> _addSubject() async {
-    final TextEditingController subjectNameController = TextEditingController();
-    final TextEditingController creditsController = TextEditingController();
-    final TextEditingController totalClassesController =
-        TextEditingController();
-    final TextEditingController classesAttendedController =
-        TextEditingController();
-    final TextEditingController proxiedClassesController =
-        TextEditingController();
-    final TextEditingController targetAttendanceController =
-        TextEditingController();
-    final TextEditingController gradeController = TextEditingController();
-    final TextEditingController marksController = TextEditingController();
-
-    List<String> selectedDays = [];
-
-    final Map<String, String> dayMap = {
-      'Mon': 'Monday',
-      'Tue': 'Tuesday',
-      'Wed': 'Wednesday',
-      'Thu': 'Thursday',
-      'Fri': 'Friday',
-      'Sat': 'Saturday',
-      'Sun': 'Sunday',
-    };
-
     await showDialog(
       context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) => AlertDialog(
-          title: const Text('Add Subject'),
-          content: SingleChildScrollView(
-            child: Column(
-              children: [
-                TextField(
-                  controller: subjectNameController,
-                  decoration: const InputDecoration(
-                      hintText: 'Subject Name',
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(10)))),
-                ),
-                TextField(
-                  controller: creditsController,
-                  decoration: const InputDecoration(
-                      hintText: 'Credits',
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(10)))),
-                  keyboardType: TextInputType.number,
-                ),
-                Wrap(
-                  spacing: 8.0,
-                  children: dayMap.entries.map((entry) {
-                    return ChoiceChip(
-                      label: Text(entry.key),
-                      selected: selectedDays.contains(entry.value),
-                      selectedColor: Colors.blue,
-                      onSelected: (selected) {
-                        setState(() {
-                          selected
-                              ? selectedDays.add(entry.value)
-                              : selectedDays.remove(entry.value);
-                        });
-                      },
-                    );
-                  }).toList(),
-                ),
-                TextField(
-                  controller: totalClassesController,
-                  decoration: const InputDecoration(
-                    hintText: 'Total Classes Till Now',
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10))),
-                  ),
-                  keyboardType: TextInputType.number,
-                ),
-                TextField(
-                  controller: classesAttendedController,
-                  decoration: const InputDecoration(
-                    hintText: 'Classes Attended',
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10))),
-                  ),
-                  keyboardType: TextInputType.number,
-                ),
-                TextField(
-                  controller: proxiedClassesController,
-                  decoration: const InputDecoration(
-                    hintText: 'Proxied Classes',
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10))),
-                  ),
-                  keyboardType: TextInputType.number,
-                ),
-                TextField(
-                  controller: targetAttendanceController,
-                  decoration: const InputDecoration(
-                    hintText: 'Target Attendance',
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10))),
-                  ),
-                  keyboardType: TextInputType.number,
-                ),
-                TextField(
-                  controller: gradeController,
-                  decoration: const InputDecoration(
-                      hintText: 'Expected Grade',
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(10)))),
-                ),
-                TextField(
-                  controller: marksController,
-                  decoration: const InputDecoration(
-                      hintText: 'Marks',
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(10)))),
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () async {
-                final String name = subjectNameController.text;
-                final String grade = gradeController.text;
-                final String marks = marksController.text;
-                final int credits = int.parse(creditsController.text);
-                final List<String> daysHeld = selectedDays;
-                final int targetAttendance =
-                    int.parse(targetAttendanceController.text);
-                final int totalClasses = int.parse(totalClassesController.text);
-                final int classesAttended =
-                    int.parse(classesAttendedController.text);
-                final int proxiedClasses =
-                    int.parse(proxiedClassesController.text);
+      builder: (context) => AlertDialog(
+        title: const Text('Add Subject'),
+        content: SubjectForm(
+          onSubmit: (subjectData) async {
+            await _firestoreService.addSubject(
+                userCredentials.uid, subjectData);
+            setState(() {
+              subjects = fetchSubjects(); // Refresh the list
+            });
+            Navigator.of(context).pop();
+          },
+        ),
+      ),
+    );
+  }
 
-                final Map<String, dynamic> subjectData = {
-                  'name': name,
-                  'credits': credits,
-                  'days_held': daysHeld,
-                  'total_classes': totalClasses,
-                  'classes_attended': classesAttended,
-                  'proxied_classes': proxiedClasses,
-                  'target_attendance': targetAttendance,
-                  'grade': grade,
-                  'marks': marks
-                };
-
-                await _firestoreService.addSubject(
-                    userCredentials.uid, subjectData);
-                setState(() {
-                  subjects = fetchSubjects(); // Refresh the list
-                });
-
-                Navigator.of(context).pop();
-              },
-              child: const Text('Add'),
-            ),
-          ],
+  Future<void> _editSubject(Subject subject) async {
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Edit Subject'),
+        content: SubjectForm(
+          initialData: subject.toJson(),
+          onSubmit: (subjectData) async {
+            await _firestoreService.updateSubject(
+                userCredentials.uid, subject.id, subjectData);
+            setState(() {
+              subjects = fetchSubjects(); // Refresh the list
+            });
+            Navigator.of(context).pop();
+          },
         ),
       ),
     );
@@ -256,17 +129,17 @@ class _SubjectsPageState extends State<SubjectsPage> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      "Real Attendance: ${subject.realAttendance.toString()}",
+                                      "Real Attendance: ${subject.realAttendance.toStringAsFixed(2)}%",
                                       style:
                                           const TextStyle(color: Colors.green),
                                     ),
                                     Text(
-                                      "Proxied Attendance: ${subject.proxiedAttendance.toString()}",
+                                      "Proxied Attendance: ${subject.proxiedAttendance.toStringAsFixed(2)}%",
                                       style:
                                           const TextStyle(color: Colors.blue),
                                     ),
                                     Text(
-                                      "Target Attendance: ${subject.targetAttendance.toString()}",
+                                      "Target Attendance: ${subject.targetAttendance}%",
                                       style:
                                           const TextStyle(color: Colors.purple),
                                     ),
@@ -274,11 +147,6 @@ class _SubjectsPageState extends State<SubjectsPage> {
                                       "Schedule: ${subject.daysHeld.join(', ')}",
                                       style:
                                           const TextStyle(color: Colors.brown),
-                                    ),
-                                    Text(
-                                      "Days Held: ${subject.daysHeld.join(', ')}\n",
-                                      style: const TextStyle(
-                                          color: Colors.white10),
                                     ),
                                     Text(
                                       "Credits: ${subject.credits}",
@@ -289,23 +157,21 @@ class _SubjectsPageState extends State<SubjectsPage> {
                                       children: [
                                         Text("Grade: ${subject.grade}",
                                             style: const TextStyle(
-                                                color: Colors.white10)),
+                                                color: Colors.black54)),
+                                        const SizedBox(width: 10),
                                         Text("Marks: ${subject.marks}",
                                             style: const TextStyle(
-                                                color: Colors.white10)),
+                                                color: Colors.black54)),
                                       ],
                                     ),
-
-                                    const Text(
-                                      "Attend/Can Bunk ------- Classes",
-                                      style: TextStyle(color: Colors.black),
-                                    ), //TODO: Add the logic to calculate the number of days in place of ----.
+                                    // TODO: Add the logic to calculate the number of days to attend/can bunk
                                   ],
                                 ),
                                 trailing: IconButton(
-                                    icon: const Icon(Icons.edit),
-                                    onPressed: () {},
-                                    padding: const EdgeInsets.all(10)),
+                                  icon: const Icon(Icons.edit),
+                                  onPressed: () => _editSubject(subject),
+                                  padding: const EdgeInsets.all(10),
+                                ),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(15),
                                 ),

@@ -12,9 +12,11 @@ class FirestoreService {
       DocumentSnapshot userDocument = userSnapshot.docs.first;
       QuerySnapshot subjectSnapshot =
           await userDocument.reference.collection('subjects').get();
-      List<Map<String, dynamic>> subjects = subjectSnapshot.docs
-          .map((doc) => doc.data() as Map<String, dynamic>)
-          .toList();
+      List<Map<String, dynamic>> subjects = subjectSnapshot.docs.map((doc) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        data['id'] = doc.id; // Add the document ID to the data
+        return data;
+      }).toList();
       return subjects;
     } catch (e) {
       throw Exception('Error fetching subjects: $e');
@@ -22,9 +24,7 @@ class FirestoreService {
   }
 
   Future<void> addSubject(
-      // To add the subject a user wishes to add in the database.
-      String userId,
-      Map<String, dynamic> subjectData) async {
+      String userId, Map<String, dynamic> subjectData) async {
     try {
       QuerySnapshot userSnapshot =
           await _db.collection('User').where('id', isEqualTo: userId).get();
@@ -35,6 +35,24 @@ class FirestoreService {
       await userDocument.reference.collection('subjects').add(subjectData);
     } catch (e) {
       throw Exception('Error adding subject: $e');
+    }
+  }
+
+  Future<void> updateSubject(
+      String userId, String subjectId, Map<String, dynamic> subjectData) async {
+    try {
+      QuerySnapshot userSnapshot =
+          await _db.collection('User').where('id', isEqualTo: userId).get();
+      if (userSnapshot.docs.isEmpty) {
+        throw Exception('User document not found for ID: $userId');
+      }
+      DocumentSnapshot userDocument = userSnapshot.docs.first;
+      await userDocument.reference
+          .collection('subjects')
+          .doc(subjectId)
+          .update(subjectData);
+    } catch (e) {
+      throw Exception('Error updating subject: $e');
     }
   }
 }
