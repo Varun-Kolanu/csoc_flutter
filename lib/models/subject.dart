@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class Subject {
@@ -11,7 +12,10 @@ class Subject {
   int proxiedClasses;
   final String grade;
   final String marks;
-  String selectedAction;
+  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  Map<DateTime, String> actions;
+  Color borderColor = Colors.transparent;
+  String userId = '';
 
   Subject({
     required this.id,
@@ -22,10 +26,73 @@ class Subject {
     required this.totalClasses,
     required this.attendedClasses,
     required this.proxiedClasses,
+    required this.actions,
     this.grade = '',
     this.marks = '',
-    this.selectedAction = '',
   });
+
+  Future<void> updateSubject(String userId) async {
+    try {
+      QuerySnapshot userSnapshot =
+          await _db.collection('User').where('id', isEqualTo: userId).get();
+      if (userSnapshot.docs.isEmpty) {
+        throw Exception('User document not found for ID: $userId');
+      }
+      DocumentSnapshot userDocument = userSnapshot.docs.first;
+      await userDocument.reference
+          .collection('subjects')
+          .doc(id)
+          .update(toJson());
+    } catch (e) {
+      throw Exception('Error updating subject: $e');
+    }
+  }
+
+  void updateAction(DateTime date, String action) {
+    actions[date] = action;
+  }
+
+  String getAction(DateTime date) {
+    return actions[date] ?? '';
+  }
+
+  int get getClasses {
+    if (((attendedClasses - targetAttendance / 100 * totalClasses) /
+                (targetAttendance - 1))
+            .toInt() <
+        1) {
+      return 1;
+    } else {
+      return ((attendedClasses - targetAttendance / 100 * totalClasses) /
+              (targetAttendance - 1))
+          .toInt();
+    }
+  }
+
+  int get getProxies {
+    if ((((proxiedClasses + attendedClasses) -
+                    targetAttendance / 100 * totalClasses) /
+                (targetAttendance - 1))
+            .toInt() <
+        1) {
+      return 1;
+    } else {
+      return (((proxiedClasses + attendedClasses) -
+                  targetAttendance / 100 * totalClasses) /
+              (targetAttendance - 1))
+          .toInt();
+    }
+  }
+
+  int get bunkClasses {
+    return (attendedClasses / targetAttendance * 100 - totalClasses).toInt();
+  }
+
+  int get bunkProxies {
+    return ((proxiedClasses + attendedClasses) / targetAttendance * 100 -
+            totalClasses)
+        .toInt();
+  }
 
   double get realAttendance {
     if (totalClasses == 0) return 0.0;
@@ -41,6 +108,11 @@ class Subject {
   }
 
   factory Subject.fromJson(Map<String, dynamic> json) {
+    Map<String, String> actionsMap =
+        Map<String, String>.from(json['actions'] ?? {});
+    Map<DateTime, String> actions =
+        actionsMap.map((key, value) => MapEntry(DateTime.parse(key), value));
+
     return Subject(
       id: json['id'],
       name: json['name'],
@@ -52,10 +124,14 @@ class Subject {
       proxiedClasses: json['proxied_classes'],
       grade: json['grade'],
       marks: json['marks'],
+      actions: actions,
     );
   }
 
   Map<String, dynamic> toJson() {
+    Map<String, String> actionsMap =
+        actions.map((key, value) => MapEntry(key.toIso8601String(), value));
+
     return {
       'id': id,
       'name': name,
@@ -67,32 +143,53 @@ class Subject {
       'target_attendance': targetAttendance,
       'grade': grade,
       'marks': marks,
+      'actions': actionsMap,
     };
   }
 
-  Color borderColor = Colors.transparent;
-  void attended() {
-    attendedClasses++;
-    totalClasses++;
-    borderColor = Colors.green;
+  void attended(DateTime date) {
+    if (getAction(date) != 'attended') {
+      if (getAction(date).isNotEmpty) undoAction(date);
+      attendedClasses++;
+      totalClasses++;
+      borderColor = Colors.green;
+      updateAction(date, 'attended');
+      updateSubject(userId);
+    }
   }
 
-  void missed() {
-    totalClasses++;
-    borderColor = Colors.red;
+  void missed(DateTime date) {
+    if (getAction(date) != 'missed') {
+      if (getAction(date).isNotEmpty) undoAction(date);
+      totalClasses++;
+      borderColor = Colors.red;
+      updateAction(date, 'missed');
+      updateSubject(userId);
+    }
   }
 
-  void proxied() {
-    proxiedClasses++;
-    totalClasses++;
-    borderColor = Colors.blue;
+  void proxied(DateTime date) {
+    if (getAction(date) != 'proxied') {
+      if (getAction(date).isNotEmpty) undoAction(date);
+      proxiedClasses++;
+      totalClasses++;
+      borderColor = Colors.blue;
+      updateAction(date, 'proxied');
+      updateSubject(userId);
+    }
   }
 
-  void cancelled() {
-    borderColor = Colors.yellow;
+  void cancelled(DateTime date) {
+    if (getAction(date) != 'cancelled') {
+      if (getAction(date).isNotEmpty) undoAction(date);
+      borderColor = Colors.yellow;
+      updateAction(date, 'cancelled');
+      updateSubject(userId);
+    }
   }
 
-  void undoAction(String action) {
+  void undoAction(DateTime date) {
+    String action = getAction(date);
     switch (action) {
       case 'attended':
         attendedClasses--;
@@ -109,5 +206,6 @@ class Subject {
         // No change needed for cancelled
         break;
     }
+    actions.remove(date);
   }
 }
