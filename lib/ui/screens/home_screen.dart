@@ -1,5 +1,6 @@
 import 'package:csoc_flutter/cubit/date_cubit.dart';
 import 'package:csoc_flutter/models/subject.dart';
+import 'package:csoc_flutter/ui/widgets/add_extra_class.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -183,8 +184,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                                           "Proxied Attendance: ${subject.proxiedAttendance}"),
                                                       Text(
                                                           "Target Attendance: ${subject.targetAttendance}"),
-                                                      const Text(
-                                                          "Attend/Can Bunk ------- Classes"),
+                                                      Text(subject.targetAttendance >
+                                                              subject
+                                                                  .realAttendance
+                                                          ? "You Have To Attend ${subject.getClasses} Classes"
+                                                          : "You Can Bunk ${subject.bunkClasses} Classes"),
+                                                      Text(subject.targetAttendance >
+                                                              subject
+                                                                  .proxiedAttendance
+                                                          ? "Get ${subject.getProxies} Proxies"
+                                                          : "You Can Leave ${subject.bunkProxies} Proxies"),
                                                       Row(
                                                         mainAxisAlignment:
                                                             MainAxisAlignment
@@ -193,20 +202,21 @@ class _HomeScreenState extends State<HomeScreen> {
                                                           IconButton(
                                                             onPressed: () {
                                                               setState(() {
-                                                                if (subject
-                                                                        .selectedAction !=
+                                                                final currentAction =
+                                                                    subject.getAction(
+                                                                        selectedDate);
+                                                                if (currentAction !=
                                                                     'attended') {
-                                                                  if (subject
-                                                                      .selectedAction
+                                                                  if (currentAction
                                                                       .isNotEmpty) {
                                                                     subject.undoAction(
-                                                                        subject
-                                                                            .selectedAction);
+                                                                        selectedDate);
                                                                   }
-                                                                  subject
-                                                                      .attended();
-                                                                  subject.selectedAction =
-                                                                      'attended';
+                                                                  subject.attended(
+                                                                      selectedDate);
+                                                                  subject.updateSubject(
+                                                                      userCredentials
+                                                                          .uid);
                                                                 }
                                                               });
                                                             },
@@ -219,20 +229,21 @@ class _HomeScreenState extends State<HomeScreen> {
                                                           IconButton(
                                                             onPressed: () {
                                                               setState(() {
-                                                                if (subject
-                                                                        .selectedAction !=
+                                                                final currentAction =
+                                                                    subject.getAction(
+                                                                        selectedDate);
+                                                                if (currentAction !=
                                                                     'missed') {
-                                                                  if (subject
-                                                                      .selectedAction
+                                                                  if (currentAction
                                                                       .isNotEmpty) {
                                                                     subject.undoAction(
-                                                                        subject
-                                                                            .selectedAction);
+                                                                        selectedDate);
                                                                   }
-                                                                  subject
-                                                                      .missed();
-                                                                  subject.selectedAction =
-                                                                      'missed';
+                                                                  subject.missed(
+                                                                      selectedDate);
+                                                                  subject.updateSubject(
+                                                                      userCredentials
+                                                                          .uid);
                                                                 }
                                                               });
                                                             },
@@ -244,20 +255,21 @@ class _HomeScreenState extends State<HomeScreen> {
                                                           IconButton(
                                                             onPressed: () {
                                                               setState(() {
-                                                                if (subject
-                                                                        .selectedAction !=
+                                                                final currentAction =
+                                                                    subject.getAction(
+                                                                        selectedDate);
+                                                                if (currentAction !=
                                                                     'proxied') {
-                                                                  if (subject
-                                                                      .selectedAction
+                                                                  if (currentAction
                                                                       .isNotEmpty) {
                                                                     subject.undoAction(
-                                                                        subject
-                                                                            .selectedAction);
+                                                                        selectedDate);
                                                                   }
-                                                                  subject
-                                                                      .proxied();
-                                                                  subject.selectedAction =
-                                                                      'proxied';
+                                                                  subject.proxied(
+                                                                      selectedDate);
+                                                                  subject.updateSubject(
+                                                                      userCredentials
+                                                                          .uid);
                                                                 }
                                                               });
                                                             },
@@ -270,20 +282,21 @@ class _HomeScreenState extends State<HomeScreen> {
                                                           IconButton(
                                                             onPressed: () {
                                                               setState(() {
-                                                                if (subject
-                                                                        .selectedAction !=
+                                                                final currentAction =
+                                                                    subject.getAction(
+                                                                        selectedDate);
+                                                                if (currentAction !=
                                                                     'cancelled') {
-                                                                  if (subject
-                                                                      .selectedAction
+                                                                  if (currentAction
                                                                       .isNotEmpty) {
                                                                     subject.undoAction(
-                                                                        subject
-                                                                            .selectedAction);
+                                                                        selectedDate);
                                                                   }
-                                                                  subject
-                                                                      .cancelled();
-                                                                  subject.selectedAction =
-                                                                      'cancelled';
+                                                                  subject.cancelled(
+                                                                      selectedDate);
+                                                                  subject.updateSubject(
+                                                                      userCredentials
+                                                                          .uid);
                                                                 }
                                                               });
                                                             },
@@ -316,7 +329,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           const SizedBox(height: 20),
                           ElevatedButton(
                             onPressed: () {
-                              // TODO: Add logic to add extra class
+                              addextraclass();
                             },
                             child: const Text('Add Extra Class'),
                           ),
@@ -334,6 +347,20 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> addextraclass() async {
+    await showDialog(
+      context: context,
+      builder: (context) => const AlertDialog(
+        scrollable: true,
+        title: Text('Add Extra Class'),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: AddExtraClass(),
         ),
       ),
     );
